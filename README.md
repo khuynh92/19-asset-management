@@ -1,35 +1,57 @@
-![CF](https://camo.githubusercontent.com/70edab54bba80edb7493cad3135e9606781cbb6b/687474703a2f2f692e696d6775722e636f6d2f377635415363382e706e67) Image Uploads w/ AWS S3
-===
+[![Build Status](https://travis-ci.com/khuynh92/18-oauth.svg?branch=master)](https://travis-ci.com/khuynh92/18-oauth)
 
-## Submission Instructions
-  * Follow the instructions in the "Lab Instructions" documentation in the reference folder of the class repository
-  
+Travis: https://travis-ci.com/khuynh92/18-oauth  
+Heroku: https://khoa-18-oauth.herokuapp.com  
+PR: https://github.com/khuynh92/18-oauth/pull/1  
 
-## Learning Objectives  
-* students will be able to upload static assets to AWS S3
-* students will be able to retrieve a cdn url that contains the previously uploaded static asset
-* students will be able to work with secret and public access keys
-* students will be able to assemble an application from modular parts
+## 18-oauth
 
-## Requirements
 
-#### Description
-* create an AWS account
-* create an AWS Access Key and Secret
-  * add the Access Key and Secret to your `.env` file
-* create a new model that represents a file type that you want to store on AWS S3
-  * ex: `.mp3`, `.mp4`, `.png`, etc
-* create a test that uploads one of these files to your route
-* use `multer` to parse the file upload request
-* use the `aws-sdk` to assist with uploading
-* create user, profile, and image models, with relational connections
-* combine your API, Auth, and Upload modules into a single application
-* Following a sign-in (or OAuth creation), create a profile model entry, connected to the user id
-* Following the upload of an image, create a new record in the image collection, connected to the profile
-* Using populate, return a user's full profile AND a list of all images they've uploaded as a JSON object
-* Later, we can use this API to feed a pintrest like application. 
+in order to run this app:
 
-#### Tests
-* `POST` - **200** - test that the upload worked and a resource object is returned
-* `DELETE` - **204** - test to ensure the object was deleted from s3
+ 1. clone this repository
 
+
+ 2. in your root folder, create a .env file and set PORT, MONGODB_URI, and APP_SECRET values.  example: 
+
+ ```
+ PORT = 3000
+ MONGODB_URI = 'mongodb://localhost/lab_16'
+ APP_SECRET = 'sssshhhhhhhhh'
+
+ ``` 
+
+ 3. First start up your mongo server, and then in your terminal, locate where you cloned this repository, and then type the command: `npm start`. This will begin the server.
+
+ 4. in your broswer go to  
+`http://localhost:<YOURPORTHERE>`  
+
+ 5. Here, you can input fields to test the POST request. The post request will direct you to `http://localhost:<YOURPORTHERE>/post` and show the generated JSON Web Token (jwt) from the post
+
+ 6. To test signup(post), use your choice of tools that makes requests to servers (httpie, postman). Without a header that has Basic Authorization, a 401 will be sent. if There is a header object with a Basic Authorizatoin Key, a status code of 200 will be returned with the jwt.
+
+ 7. to test the signin(get), ensure that you are signing in using a basic authentication created using the id and password from an existing user
+
+### API Testing api/v1/pizza
+*All tests must have a bearer authentication from an existing user in the database*
+1. To test post, use your choice of tools that makes requests to servers (httpie, postman). send a body that includes a name, style, and toppings. The response will be the sent body with an included id from the user who created the post
+
+body example:
+```
+{
+  "name":"Hawaiian",
+  "style":"New York",
+  "toppings":"Hawaiian "
+}
+```
+2. To test get by going to api/v1/pizza. This will show you the pizzas that ONLY YOU have created. You will be sent a 401 error and denied access if you try to access another users data.
+
+3. To test get by going to api/v1/pizza/<id>. This will show you the pizza that ONLY YOU have created. You will be sent a 401 error and denied access if you try to access another users data.
+
+4. To test DELETE, use your choice of tools that makes requests to servers (httpie, postman). If no id is passed, a 404 error will appear. DELETE requests will only work on pathnames with id parameters: `api/v1/pizza/<your id here>`. You will only have access to delete data that you have create. A 401 error will be sent if you try to delete another users data
+
+5. To test PUT, use your choice of tools that makes requests to servers (httpie, postman). If no id is passed, a 404 error will appear. PUT requests will only work on pathnames with id parameters: `api/v1/pizza/<your id here>`. You will only have access to change data that you have create. A 401 error will be sent if you try to delete another users data
+
+
+
+**This lab was built off of codefellows 18-oauth demo code**
