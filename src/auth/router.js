@@ -35,13 +35,24 @@ authRouter.get('/signin', auth, (req, res) => {
 });
 
 authRouter.get('/oauth/google/code', (req,res,next) => {
-  oauth.authorize(req)
+  oauth.googleAuthorize(req)
     .then(token => {
       res.cookie('auth', token);
       res.redirect(`${process.env.API_URL}/profile/${req.id}`);
     })
     .catch(next);
 });
+
+authRouter.get('/oauth/linkedIn/code', (req,res,next) => {
+  oauth.linkedInAuthorize(req)
+    .then(token => {
+      res.cookie('auth', token);
+      res.redirect(`${process.env.API_URL}/profile/${req.id}`);
+    })
+    .catch(next);
+});
+
+
 
 authRouter.get('/newUser', auth, (req,res,next) => {
   if (req.id) {

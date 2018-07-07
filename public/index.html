@@ -7,11 +7,12 @@
 
 <body>
   <main>
-    <div id="oauth"></div>
+    <div id="google"></div>
+    <div id="linkedIn"></div>
 
     <h2>CREATE ACCOUNT</h2>
-    <form action="http://localhost:3000/signup" method="POST">
-      <!-- <form action="https://khoa-19-asset-mangagement.herokuapp.com/signup" method="POST"> -->
+    <!-- <form action="http://localhost:3000/signup" method="POST"> -->
+      <form action="https://khoa-19-asset-mangagement.herokuapp.com/signup" method="POST">
       <label>
         Username:
         <input name="username">
@@ -36,8 +37,8 @@
     </form>
     <hr />
     <h2>Upload File</h2>
-    <!-- <form action="http://khoa-19-asset-mangagement/upload" method="post" enctype="multipart/form-data"> -->
-    <form action="http://localhost:3000/upload" method="post" enctype="multipart/form-data">
+    <form action="http://khoa-19-asset-mangagement/upload" method="post" enctype="multipart/form-data">
+    <!-- <form action="http://localhost:3000/upload" method="post" enctype="multipart/form-data"> -->
       <label>
         Title
         <input name="title" />
@@ -52,22 +53,43 @@
   <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
   <script>
     let googleURL = "https://accounts.google.com/o/oauth2/v2/auth"
-    let options = {
+    let googleOptions = {
       client_id: '123538572340-or8e9drlqqnlmkfupkcfh519d889dqo6.apps.googleusercontent.com',
-      // redirect_uri: 'https://khoa-18-oauth.herokuapp.com/oauth/google/code',
-      redirect_uri: 'http://localhost:3000/oauth/google/code',
+      redirect_uri: 'https://khoa-19-asset-management.herokuapp.com/oauth/google/code',
+      // redirect_uri: 'http://localhost:3000/oauth/google/code',
       scope: 'email openid profile',
       prompt: 'consent',
       response_type: 'code'
     }
 
-    let queryString = Object.keys(options).map(key => {
-      return `${key}=` + encodeURIComponent(options[key])
+    let queryString = Object.keys(googleOptions).map(key => {
+      return `${key}=` + encodeURIComponent(googleOptions[key])
     }).join('&');
 
-    let authURL = `${googleURL}?${queryString}`
+    let authGoogleURL = `${googleURL}?${queryString}`
 
-    $('#oauth').append(`<a href="${authURL}">Login With Google</a>`)
+    $('#google').append(`<a href="${authGoogleURL}">Login With Google</a>`)
+
+  </script>
+  <script>
+  let linkedInURL = "https://www.linkedin.com/oauth/v2/authorization"
+    let linkedInOptions = {
+      client_id: '86v36mks0tlhmk',
+      // redirect_uri: 'http://localhost:3000/oauth/linkedIn/code',
+      redirect_uri: 'https://khoa-19-asset-management.herokuapp.com/oauth/linkedIn/code',
+      scope: 'r_basicprofile r_emailaddress',
+      response_type: 'code',
+      state: 'LKKdlahjk123jhka23hk1dh12',
+    }
+
+    let linkedInqueryString = Object.keys(linkedInOptions).map(key => {
+      return `${key}=` + encodeURIComponent(linkedInOptions[key])
+    }).join('&');
+
+    let authLinkedInURL = `${linkedInURL}?${linkedInqueryString}`
+
+    $('#linkedIn').append(`<a href="${authLinkedInURL}">Login With LinkedIn</a>`)
+  </script>
   </script>
 </body>
 

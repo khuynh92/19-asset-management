@@ -42,6 +42,7 @@ userSchema.statics.createFromOAuth = function(googleUser) {
         password: password,
         email: googleUser.email,
       }).then(newUser => {
+        console.log('this new user is', newUser);
         return Profile.create({
           name: googleUser.name,
           userID: newUser._id,

@@ -1,57 +1,40 @@
 [![Build Status](https://travis-ci.com/khuynh92/18-oauth.svg?branch=master)](https://travis-ci.com/khuynh92/18-oauth)
 
-Travis: https://travis-ci.com/khuynh92/18-oauth  
-Heroku: https://khoa-18-oauth.herokuapp.com  
-PR: https://github.com/khuynh92/18-oauth/pull/1  
+Travis: https://travis-ci.com/khuynh92/19-asset-management  
+Heroku: https://khoa-19-asset-management.herokuapp.com  
+PR: https://github.com/khuynh92/19-asset-management/pull/1  
 
-## 18-oauth
+## 19-asset-management
 
+## testing routes
 
-in order to run this app:
+**note: most signin/signup GET/POST routes utilize cookies for authentication. A user must either provide a valid Bearer Token or Cookie to access Most APIs on this site** 
 
- 1. clone this repository
+### OAuth Sign in/up
+on the home page `https://khoa-19-asset-management.herokuapp.com` click on the anchor tag 'sign in with linkedIn' OR 'sign in with google' to test linkedIn OAuth. When signing in again, both Oauth links will resolve to the same user.
 
+After a successful login/signup, the user will be redirected to their profile object, showing the images that they uploaded, userID, profile _id, name, and profilePic (based off of which OAuth account they signed up with)
 
- 2. in your root folder, create a .env file and set PORT, MONGODB_URI, and APP_SECRET values.  example: 
+### POST /signup
+on the home page, use the form to create an account. The user will be redirected to their profile object, with the images they've uploaded, profile _id, userID, and name. *Note no profile picture will appear since the account was not created with OAuth*
 
- ```
- PORT = 3000
- MONGODB_URI = 'mongodb://localhost/lab_16'
- APP_SECRET = 'sssshhhhhhhhh'
+### /signin
+To test signin, Use the JWT that was given when signing up on the home page. Use that JWT as a bearer token in postman or httpie. The user will be redirected to their profile object.
 
- ``` 
+#### get /profile & /profile/:id
+when a user sends a get request to /profile, they will be redirected to their /profile/:id. If no profile/:id is found, a 404 NOT FOUND error will be returned.
 
- 3. First start up your mongo server, and then in your terminal, locate where you cloned this repository, and then type the command: `npm start`. This will begin the server.
+### post /upload
+To post a picture to s3 using /upload, use the form on the homepage. After a successful post with completed fields, a Image object will be returned giving the _id, title, and s3 URL.
 
- 4. in your broswer go to  
-`http://localhost:<YOURPORTHERE>`  
+### get /api/v1/images
+api/v1/images shows all images that a user posted. The user can only see their image uploads, and no one elses.
 
- 5. Here, you can input fields to test the POST request. The post request will direct you to `http://localhost:<YOURPORTHERE>/post` and show the generated JSON Web Token (jwt) from the post
+### get /api/v1/images/:id
+represents a single image that a user posted. If a user attempts to access a image/:id that they did not create, an Unauthorized Access Error will appear.
 
- 6. To test signup(post), use your choice of tools that makes requests to servers (httpie, postman). Without a header that has Basic Authorization, a 401 will be sent. if There is a header object with a Basic Authorizatoin Key, a status code of 200 will be returned with the jwt.
-
- 7. to test the signin(get), ensure that you are signing in using a basic authentication created using the id and password from an existing user
-
-### API Testing api/v1/pizza
-*All tests must have a bearer authentication from an existing user in the database*
-1. To test post, use your choice of tools that makes requests to servers (httpie, postman). send a body that includes a name, style, and toppings. The response will be the sent body with an included id from the user who created the post
-
-body example:
-```
-{
-  "name":"Hawaiian",
-  "style":"New York",
-  "toppings":"Hawaiian "
-}
-```
-2. To test get by going to api/v1/pizza. This will show you the pizzas that ONLY YOU have created. You will be sent a 401 error and denied access if you try to access another users data.
-
-3. To test get by going to api/v1/pizza/<id>. This will show you the pizza that ONLY YOU have created. You will be sent a 401 error and denied access if you try to access another users data.
-
-4. To test DELETE, use your choice of tools that makes requests to servers (httpie, postman). If no id is passed, a 404 error will appear. DELETE requests will only work on pathnames with id parameters: `api/v1/pizza/<your id here>`. You will only have access to delete data that you have create. A 401 error will be sent if you try to delete another users data
-
-5. To test PUT, use your choice of tools that makes requests to servers (httpie, postman). If no id is passed, a 404 error will appear. PUT requests will only work on pathnames with id parameters: `api/v1/pizza/<your id here>`. You will only have access to change data that you have create. A 401 error will be sent if you try to delete another users data
+### delete /api/v1/image/:id
+This will delete both the image in the database and the image in the aws s3 bucket. Upon success, a success message will appear: `<id> has successfully been deleted`. If a user attempts to delete a image they did not upload, an Unauthorized Access Error will appear. To check if the image has successfully been delete, go to /profile or /image/:id to see if the image still exists.
 
 
-
-**This lab was built off of codefellows 18-oauth demo code**
+**This lab was built off of codefellows 19-asset-management demo code**
