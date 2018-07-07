@@ -1,12 +1,13 @@
 'use strict';
 
 import express from 'express';
-
+import fs from 'fs';
 const authRouter = express.Router();
 
 import User from './users.js';
 import auth from './auth.js';
 import oauth from './lib/oauth.js';
+import Profile from './../models/profile.js';
 
 authRouter.post('/signup', (req, res, next) => {
   if(!Object.keys(req.body).length) {
@@ -15,29 +16,56 @@ authRouter.post('/signup', (req, res, next) => {
   let user = new User(req.body);
   user.save()
     .then(user => {
-      res.send(user.generateToken());
+      let token = user.generateToken();
+      res.cookie('auth', token);
+      Profile.create({
+        name: req.body.name,
+        userID: user._id,
+      })
+        .then(() => {
+          res.redirect(`${process.env.API_URL}/profile/${user._id}`);
+        });
     })
     .catch(next);
 });
 
 authRouter.get('/signin', auth, (req, res) => {
-  res.cookie('Token', req.token);
-  res.send(req.token);
+  res.cookie('auth', req.token);
+  res.redirect(`${process.env.API_URL}/profile/${req.id}`);
 });
 
 authRouter.get('/oauth/google/code', (req,res,next) => {
-  oauth.authorize(req)
+  oauth.googleAuthorize(req)
     .then(token => {
       res.cookie('auth', token);
-      res.redirect(`${process.env.CLIENT_URL}?token=${token}`);
+      res.redirect(`${process.env.API_URL}/profile/${req.id}`);
     })
     .catch(next);
 });
 
-authRouter.get('/open', auth, (req,res) => {
-  console.log(req.query.token);
-  
-  res.send('Sesame');
+authRouter.get('/oauth/linkedIn/code', (req,res,next) => {
+  oauth.linkedInAuthorize(req)
+    .then(token => {
+      res.cookie('auth', token);
+      res.redirect(`${process.env.API_URL}/profile/${req.id}`);
+    })
+    .catch(next);
 });
+
+
+
+authRouter.get('/newUser', auth, (req,res,next) => {
+  if (req.id) {
+    fs.readFile(__dirname + '/../../public/newUser.html', (err, data) => {
+      if (err) { next(err); }
+  
+      res.write(data);
+      res.status(200);
+      res.end();
+  
+    });
+  }
+});
+
 
 export default authRouter;
