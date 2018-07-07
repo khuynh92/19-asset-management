@@ -3,6 +3,8 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import Profile from '../models/profile.js';
+
 
 const userSchema = new mongoose.Schema({
   username: {type: String, required: true, unique: true},
@@ -32,12 +34,21 @@ userSchema.statics.createFromOAuth = function(googleUser) {
     })
     .catch((error) => {
       console.log(error);
+      console.log(googleUser);
       let username = googleUser.email;
       let password = 'fakepasswordbutnotreallysinceitisapasswordbutitwillbelongsonoonewillbreakintoit';
       return this.create({
         username: username,
         password: password,
         email: googleUser.email,
+      }).then(newUser => {
+        return Profile.create({
+          name: googleUser.name,
+          userID: newUser._id,
+          profilePic: googleUser.picture,
+        }).then(() => {
+          return newUser;
+        });
       });
     } );
 };

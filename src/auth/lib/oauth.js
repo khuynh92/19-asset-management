@@ -4,7 +4,6 @@ import superagent from 'superagent';
 
 import User from '../users.js';
 
-
 const authorize = req => {
   let code = req.query.code;
   console.log('1. the code: ', code);
@@ -38,6 +37,7 @@ const authorize = req => {
     })
     .then(newUser => {
       console.log('5. user model created, making token');
+      req.id = newUser._id;
       return newUser.generateToken();
     });
 };
