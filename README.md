@@ -2,7 +2,7 @@
 
 Travis: https://travis-ci.com/khuynh92/19-asset-management  
 Heroku: https://khoa-19-asset-management.herokuapp.com  
-PR: https://github.com/khuynh92/19-asset-management/pull/1  
+PR: https://github.com/khuynh92/19-asset-management/pull/2  
 
 ## 19-asset-management
 
