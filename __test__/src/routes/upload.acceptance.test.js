@@ -1,7 +1,7 @@
 'use strict';
-
 require('babel-register');
 
+jest.mock('../../../src/lib/s3.js');
 import superr from 'supertest';
 import mongoose from 'mongoose';
 import { Mockgoose } from 'mockgoose';
@@ -41,8 +41,6 @@ afterEach((done) => {
 describe('acceptance tests', () => {
 
   let user1Token;
-  let user2Token;
-
   beforeEach((done) => {
     let newUser = {
       name: 'user',
@@ -63,13 +61,6 @@ describe('acceptance tests', () => {
       .then(response => {
         let cookieDough = response.headers['set-cookie'][0];
         user1Token = cookieDough.split('=')[1].split(';')[0];
-        supertest.post('/signup')
-          .send(newerUser)
-          .then(response => {
-            cookieDough = response.headers['set-cookie'][0];
-            user2Token = cookieDough.split('=')[1].split(';')[0];
-            done();
-          });
         done();
       });
   });
@@ -81,19 +72,24 @@ describe('acceptance tests', () => {
       .field('title', 'batman')
       .attach('img', `${__dirname}/asset/batman.jpg`)
       .then(res => {
-        console.log(res.text);
         expect(res.status).toEqual(200);
-        expect(res.body.url).toBeTruthy();
+        expect(res.body.url).toBe('https://mockimagepath.com');
       });
-    // return supertest.get('/')
-    //   .then(res => {
-    //     console.log(res.text);
-    //   });
 
-    // return supertest.get('/profile')
-    //   .then(response => {
-    //     console.log(response.text);
-    //   });
+  });
+
+  it('DELETE /image 204', () => {
+    return supertest.post(`/upload`)
+      .set('Authorization', `Bearer ${user1Token}`)
+      .field('title', 'batman')
+      .attach('img', `${__dirname}/asset/batman.jpg`)
+      .then(res => {
+        return supertest.delete('/api/v1/images/' + res.body._id)
+          .set('Authorization', `Bearer ${user1Token}`)
+          .then(response => {
+            expect(response.status).toEqual(204);
+          });
+      });
 
   });
 });
