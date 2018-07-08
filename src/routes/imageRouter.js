@@ -53,8 +53,9 @@ router.delete('/api/v1/images/:id', auth, (req, res, next) => {
               let key = data.url.split('com/')[1];
               s3.remove(key)
                 .then(() => {
-                  res.send(`${req.params.id} has been successfully removed`);
-                });
+                  res.status(204).end();
+                })
+                .catch(next);
             });
         } else {
           next('Unauthorized');
